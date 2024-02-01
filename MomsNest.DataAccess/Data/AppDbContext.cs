@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MomsNest.Models;
 
 namespace MomsNest.DataAccess.Data
@@ -12,6 +11,7 @@ namespace MomsNest.DataAccess.Data
         }
         public DbSet<Category> Categories { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>().HasData(
@@ -20,6 +20,7 @@ namespace MomsNest.DataAccess.Data
                 new Category { CategoryId =3, Name = "Hygiene", DisplayOrder = 3 }
 
                 );
+            
         }
 
     }

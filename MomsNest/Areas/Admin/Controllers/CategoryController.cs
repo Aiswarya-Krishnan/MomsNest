@@ -1,25 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-
 using MomsNest.DataAccess.Data;
 using MomsNest.DataAccess.Repository;
 using MomsNest.Models;
 using System.Linq;
 
-namespace MomsNest.Controllers
+namespace MomsNest.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly ICategoryRepository context;
+        private readonly IUnitOfWork context;
 
-        public CategoryController(ICategoryRepository context)
+        public CategoryController(IUnitOfWork context)
         {
             this.context = context;
         }
         public IActionResult Index()
         {
-            List<Category> CategoryList = context.GetAll().ToList();
+            List<Category> CategoryList = context.Category.GetAll().ToList();
             return View(CategoryList);
         }
 
@@ -33,28 +33,28 @@ namespace MomsNest.Controllers
         {
             if (category.Name == category.DisplayOrder.ToString())
             {
-                ModelState.AddModelError("Name","Name and Display Order Should not be same");
+                ModelState.AddModelError("Name", "Name and Display Order Should not be same");
             }
-           
+
 
             if (ModelState.IsValid)
             {
-                context.Add(category);
+                context.Category.Add(category);
                 context.Save();
                 TempData["Success"] = "Category Created successfully";
                 return RedirectToAction("Index");
             }
-                return View();
+            return View();
         }
 
         /*----Edit------*/
         public IActionResult Edit(int? id)
         {
-            if(id==null || id == 0)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-            Category CategoryL = context.Get(u=>u.CategoryId == id);
+            Category CategoryL = context.Category.Get(u => u.CategoryId == id);
             if (CategoryL == null)
             {
                 return NotFound();
@@ -65,9 +65,9 @@ namespace MomsNest.Controllers
         [HttpPost]
         public IActionResult Edit(Category category)
         {
-           if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                context.Update(category);
+                context.Category.Update(category);
                 context.Save();
                 TempData["Success"] = "Category Updated successfully";
                 return RedirectToAction("Index");
@@ -80,7 +80,7 @@ namespace MomsNest.Controllers
             {
                 return NotFound();
             }
-            Category CategoryL = context.Get(u => u.CategoryId == id);
+            Category CategoryL = context.Category.Get(u => u.CategoryId == id);
             if (CategoryL == null)
             {
                 return NotFound();
@@ -88,24 +88,24 @@ namespace MomsNest.Controllers
             return View(CategoryL);
 
         }
-        [HttpPost,ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
 
         public IActionResult DeletePost(int? id)
         {
-            Category category=context.Get(u => u.CategoryId == id);
+            Category category = context.Category.Get(u => u.CategoryId == id);
             if (category == null)
             {
                 return NotFound();
             }
 
-                context.Remove(category);
-                context.Save();
+            context.Category.Remove(category);
+            context.Save();
             TempData["Success"] = "Category Deleted successfully";
             return RedirectToAction("Index");
         }
-       
 
-        
+
+
 
 
     }

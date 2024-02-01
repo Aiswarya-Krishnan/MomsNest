@@ -10,21 +10,18 @@ namespace MomsNest.DataAccess.Repository
 {
     public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
-        private readonly AppDbContext context;
+        private readonly AppDbContext _context;
 
         public CategoryRepository(AppDbContext context) : base(context)
         {
-            this.context = context;
+            this._context = context;
         }
 
-        public void Save()
-        {
-            context.SaveChanges();
-        }
+       
 
         public void Update(Category obj)
         {
-            context.Categories.Update(obj);
+            _context.Categories.Update(obj);
         }
     }
 }

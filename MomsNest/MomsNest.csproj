@@ -24,4 +24,8 @@
     <ProjectReference Include="..\MomsNest.DataAccess\MomsNest.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

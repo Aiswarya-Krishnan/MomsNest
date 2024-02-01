@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using MomsNest.Models;
 using System.Diagnostics;
 
-namespace MomsNest.Controllers
+namespace MomsNest.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
