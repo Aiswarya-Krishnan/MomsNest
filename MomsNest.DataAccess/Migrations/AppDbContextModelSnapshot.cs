@@ -2,20 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MomsNest.Data;
+using MomsNest.DataAccess.Data;
 
 #nullable disable
 
-namespace MomsNest.Migrations
+namespace MomsNest.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240131030216_CategoryTable")]
-    partial class CategoryTable
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,11 +34,32 @@ namespace MomsNest.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            DisplayOrder = 1,
+                            Name = "Footwear"
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            DisplayOrder = 2,
+                            Name = "Toys"
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            DisplayOrder = 3,
+                            Name = "Hygiene"
+                        });
                 });
 #pragma warning restore 612, 618
         }

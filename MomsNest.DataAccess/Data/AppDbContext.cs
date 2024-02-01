@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MomsNest.Models;
 
-namespace MomsNest.Data
+namespace MomsNest.DataAccess.Data
 {
     public class AppDbContext : DbContext
     {

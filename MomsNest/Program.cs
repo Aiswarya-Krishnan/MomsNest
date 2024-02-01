@@ -1,11 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using MomsNest.Data;
+
+using MomsNest.DataAccess.Data;
+using MomsNest.DataAccess.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("Moms")));
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 
 var app = builder.Build();
 
