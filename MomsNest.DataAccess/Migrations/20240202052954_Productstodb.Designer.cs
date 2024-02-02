@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MomsNest.DataAccess.Data;
 
@@ -10,9 +11,11 @@ using MomsNest.DataAccess.Data;
 namespace MomsNest.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240202052954_Productstodb")]
+    partial class Productstodb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,10 +89,6 @@ namespace MomsNest.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Material")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -122,7 +121,6 @@ namespace MomsNest.DataAccess.Migrations
                             CategoryID = 2,
                             Color = "Brown",
                             Description = "Soft and cuddly teddy bear for newborns",
-                            ImageUrl = "",
                             Material = "Plush",
                             Price = 19.99m,
                             ProductName = "Cuddly Teddy Bear",
@@ -136,7 +134,6 @@ namespace MomsNest.DataAccess.Migrations
                             CategoryID = 2,
                             Color = "Pastel",
                             Description = "Adorable onesie set for infants",
-                            ImageUrl = "",
                             Material = "Cotton",
                             Price = 29.99m,
                             ProductName = "Baby Onesie Set",
@@ -150,7 +147,6 @@ namespace MomsNest.DataAccess.Migrations
                             CategoryID = 2,
                             Color = "Multicolor",
                             Description = "Colorful mobile with music for crib entertainment",
-                            ImageUrl = "",
                             Material = "Plastic",
                             Price = 39.99m,
                             ProductName = "Interactive Baby Mobile",
@@ -164,7 +160,6 @@ namespace MomsNest.DataAccess.Migrations
                             CategoryID = 2,
                             Color = "Blue",
                             Description = "Complete feeding set for infants",
-                            ImageUrl = "",
                             Material = "BPA-Free Plastic",
                             Price = 49.99m,
                             ProductName = "Baby Feeding Set",
@@ -178,7 +173,6 @@ namespace MomsNest.DataAccess.Migrations
                             CategoryID = 2,
                             Color = "Yellow",
                             Description = "Interactive and colorful book for early learning",
-                            ImageUrl = "",
                             Material = "Cardboard",
                             Price = 14.99m,
                             ProductName = "Educational Baby Book",

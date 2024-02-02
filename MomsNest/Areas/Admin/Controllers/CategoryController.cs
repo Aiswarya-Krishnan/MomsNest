@@ -74,6 +74,8 @@ namespace MomsNest.Areas.Admin.Controllers
             }
             return View();
         }
+
+        /*-----Delete-----*/
         public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)

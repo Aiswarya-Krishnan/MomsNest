@@ -1,0 +1,60 @@
+﻿@model MomsNest.Models.Product
+<div class="card shadow boarder-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 ">
+                <h2 class="text-white text-center py-2">Delete Product</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+
+        <form method="post" class="row">
+
+            <input asp-for="ProductId" hidden />
+            <div class="border p-3 ">
+                <div class="form-floating py-2 col-12">
+                    <label asp-for="ProductName" class="ms-2"></label>
+                    <input asp-for="ProductName" type="text" disabled class="form-control border-0 shadow" />
+                </div>
+                <div class="form-floating py-2 col-12">
+                    <label asp-for="Description" class="ms-2"></label>
+                    <input asp-for="Description" type="text" disabled class="form-control border-0 shadow" />
+                </div>
+                <div class="form-floating py-2 col-12">
+                    <label asp-for="Price" class="ms-2"></label>
+                    <input asp-for="Price" type="text" disabled class="form-control border-0 shadow" />
+                </div>
+                <div class="form-floating py-2 col-12">
+                    <label asp-for="StockQuantity" class="ms-2"></label>
+                    <input asp-for="StockQuantity" type="text" disabled class="form-control border-0 shadow" />
+                </div>
+                <div class="form-floating py-2 col-12">
+                    <label asp-for="Brand" class="ms-2"></label>
+                    <input asp-for="Brand" type="text" disabled class="form-control border-0 shadow" />
+                </div>
+                <div class="form-floating py-2 col-12">
+                    <label asp-for="Color" class="ms-2"></label>
+                    <input asp-for="Color" type="text" disabled class="form-control border-0 shadow" />
+                </div>
+                <div class="form-floating py-2 col-12">
+                    <label asp-for="Material" class="ms-2"></label>
+                    <input asp-for="Material" type="text" disabled class="form-control border-0 shadow" />
+                </div>
+                <div class="form-floating py-2 col-12">
+                    <label asp-for="Weight" class="ms-2"></label>
+                    <input asp-for="Weight" type="text" disabled class="form-control border-0 shadow" />
+                </div>
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-primary form-control">Delete</button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Product" asp-action="Index" class="btn-outline-secondary form-control b-2">Back To List</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

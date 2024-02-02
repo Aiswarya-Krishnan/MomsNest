@@ -14,10 +14,12 @@ namespace MomsNest.DataAccess.Repository
 
        
         public ICategoryRepository Category{ get; private set; }
+        public IProductRepository Product { get; private set; }
         public UnitOfWork(AppDbContext context)
         {
             this.context = context;
             Category = new CategoryRepository(context);
+            Product = new ProductRepository(context);
         }
 
         public void Save()
