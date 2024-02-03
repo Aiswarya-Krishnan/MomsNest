@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using MomsNest.DataAccess.Repository;
 using MomsNest.Models;
 using System.Diagnostics;
 
@@ -7,21 +8,25 @@ namespace MomsNest.Areas.Customer.Controllers
     [Area("Customer")]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        
+        private readonly IUnitOfWork unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IUnitOfWork unitOfWork)
         {
-            _logger = logger;
+            
+            this.unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            return View();
+            List<Product> PrductList = unitOfWork.Product.GetAll().ToList();
+            return View(PrductList);
         }
 
-        public IActionResult Privacy()
+        public IActionResult Details(int id)
         {
-            return View();
+            Product product = unitOfWork.Product.Get(u => u.ProductId == id);
+            return View(product);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

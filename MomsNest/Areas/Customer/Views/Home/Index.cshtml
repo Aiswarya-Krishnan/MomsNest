@@ -1,8 +1,41 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model List<Product>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<div class="row pb-3">
+    @foreach (var Product in Model)
+    {
+        <div class="col-lg-3 h-75 col-sm-6">
+            <div class="row  p-2">
+                <div class="col-12 h-75 p-1">
+                    <div class="card border-0 p-3  shadow border-top border-5 rounded ">
+                        <img src="@Product.ImageUrl" class="card-img-top h-75 rounded " />
+                        <div class="card-body ">
+                            <div class="p-lg-1">
+                                <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">
+                                    @Product.ProductName</p>
+                                <p class="card-title  text-warning text-center">
+                                  by  <b> @Product.Brand</b>
+                                </p>
+                                
+                            </div>
+                            <div class="p-lg-1">
+                                <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">
+                                    @Product.Price
+                                </p>
+                                <p class="card-title text-dark  text-center">
+                                    @Product.Description
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <a asp-action="Details" asp-route-id="@Product.ProductId" class="btn btn-primary bg-gradient border-0 form-control">
+                                Details
+                            </a>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
 </div>

@@ -18,6 +18,7 @@
             <thead>
                 <tr>
                     <th scope="col">Product Name</th>
+                    <th scope="col">Description</th>
                     <th scope="col">Price</th>
                     <th scope="col">Stock Quantity</th>
                     <th scope="col">Brand</th>
@@ -31,6 +32,8 @@
         @foreach(var obj in Model){
         <tr>
             <td>@obj.ProductName</td>
+            
+            <td>@obj.Description</td>
             <td>@obj.Price</td>
             <td>@obj.StockQuantity</td>
             <td>@obj.Brand</td>
