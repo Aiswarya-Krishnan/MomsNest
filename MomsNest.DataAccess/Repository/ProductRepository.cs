@@ -14,7 +14,7 @@ namespace MomsNest.DataAccess.Repository
 
         public ProductRepository(AppDbContext context) : base(context)
         {
-            this._context = context;
+            _context = context;
         }
 
 

@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using MomsNest.DataAccess.Data;
 using MomsNest.DataAccess.Repository;
 using MomsNest.Models;
 using System.Linq;
+using Utilities;
 
 namespace MomsNest.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles =StatDetails.Role_Admin)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork context;

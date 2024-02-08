@@ -14,10 +14,10 @@ namespace MomsNest.DataAccess.Repository
 
         public CategoryRepository(AppDbContext context) : base(context)
         {
-            this._context = context;
+            _context = context;
         }
 
-       
+
 
         public void Update(Category obj)
         {

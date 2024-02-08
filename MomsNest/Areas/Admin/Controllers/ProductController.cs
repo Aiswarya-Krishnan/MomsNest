@@ -1,14 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MomsNest.DataAccess.Repository;
 using MomsNest.Models;
 using MomsNest.Models.ViewModels;
 using System.Collections.Generic;
+using Utilities;
 
 namespace MomsNest.Areas.Admin.Controllers
 {
-       [Area("Admin")]
-        public class ProductController : Controller
+    [Area("Admin")]
+
+        [Authorize(Roles = StatDetails.Role_Admin)]
+    public class ProductController : Controller
         {
             private readonly IUnitOfWork context;
             private readonly IWebHostEnvironment webHostEnvironment;

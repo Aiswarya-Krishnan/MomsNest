@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MomsNest.DataAccess.Repository
 {
-    public interface ICategoryRepository:IRepository<Category>
+    public interface ICategoryRepository : IRepository<Category>
     {
         void Update(Category obj);
 

@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace MomsNest.DataAccess.Repository
 {
-    public class Repository<T>: IRepository<T> where T:class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private readonly AppDbContext context;
         internal DbSet<T> dbset;
         public Repository(AppDbContext context)
         {
             this.context = context;
-            this.dbset=context.Set<T>();
+            dbset = context.Set<T>();
         }
 
         public void Add(T entity)
@@ -27,14 +27,14 @@ namespace MomsNest.DataAccess.Repository
         public T Get(Expression<Func<T, bool>> filter)
         {
             IQueryable<T> query = dbset;
-            query= query.Where(filter);
+            query = query.Where(filter);
             return query.FirstOrDefault();
         }
 
         public IEnumerable<T> GetAll()
         {
             IQueryable<T> query = dbset;
-           
+
             return query.ToList();
         }
 
