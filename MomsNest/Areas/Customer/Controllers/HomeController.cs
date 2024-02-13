@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MomsNest.DataAccess.Repository;
 using MomsNest.Models;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace MomsNest.Areas.Customer.Controllers
 {
     [Area("Customer")]
+  
     public class HomeController : Controller
     {
         
@@ -25,8 +28,49 @@ namespace MomsNest.Areas.Customer.Controllers
 
         public IActionResult Details(int id)
         {
-            Product product = unitOfWork.Product.Get(u => u.ProductId == id);
-            return View(product);
+            ShoppingCart cart = new()
+            {
+                Product = unitOfWork.Product.Get(u => u.ProductId == id),
+                Count = 1,
+                Product_ID = id
+            };
+            
+            return View(cart);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+            shoppingCart.Id = 0;
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            shoppingCart.ApplicationUserID= userId;
+
+            ShoppingCart shoppingfromDDB = unitOfWork.ShoppingCart.Get(u => u.ApplicationUserID == userId &&
+            u.Product_ID == shoppingCart.Product_ID);
+
+            if (shoppingfromDDB != null)
+            {
+                shoppingfromDDB.Count += shoppingCart.Count;
+                unitOfWork.ShoppingCart.Update(shoppingfromDDB);
+
+            }
+            else
+            {
+                unitOfWork.ShoppingCart.Add(shoppingCart);
+            }
+
+            unitOfWork.Save();
+
+            TempData["Success"] = "Cart Updated successfully";
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        public IActionResult Privacy()
+        {
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -70,10 +70,10 @@ namespace MomsNest.Areas.Admin.Controllers
                     if (!string.IsNullOrEmpty(obj.Product.ImageUrl))
                     {
                         //delete old image
-                        var oldimage=Path.Combine(wwwRootPath,obj.Product.ImageUrl.TrimStart('\\'));
-                        if(System.IO.File.Exists(oldimage))
+                        var oldImage=Path.Combine(wwwRootPath,obj.Product.ImageUrl.TrimStart('\\'));
+                        if(System.IO.File.Exists(oldImage))
                         {
-                            System.IO.File.Delete(oldimage);
+                            System.IO.File.Delete(oldImage);
                         }
                     }
                     using(var filestream=new FileStream(Path.Combine(ProductPath, filename),FileMode.Create))

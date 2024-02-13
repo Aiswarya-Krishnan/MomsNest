@@ -21,7 +21,23 @@ namespace MomsNest.DataAccess.Repository
 
         public void Update(Product obj)
         {
-            _context.Products.Update(obj);
+            var objFromDb=_context.Products.FirstOrDefault(u=>u.ProductId == obj.ProductId);
+            if(objFromDb != null)
+            {
+                objFromDb.ProductName=obj.ProductName;
+                objFromDb.Description=obj.Description;
+                objFromDb.Price=obj.Price;
+                objFromDb.StockQuantity=obj.StockQuantity;
+                objFromDb.Brand=obj.Brand;
+                objFromDb.Color=obj.Color;
+                objFromDb.Material=obj.Material;
+                objFromDb.Weight=obj.Weight;
+                objFromDb.CategoryID=obj.CategoryID;
+                if(obj.ImageUrl !=null)
+                {
+                    objFromDb.ImageUrl=obj.ImageUrl;
+                }
+            }
         }
     }
 }

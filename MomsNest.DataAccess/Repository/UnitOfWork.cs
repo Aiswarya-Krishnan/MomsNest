@@ -15,11 +15,15 @@ namespace MomsNest.DataAccess.Repository
 
         public ICategoryRepository Category { get; private set; }
         public IProductRepository Product { get; private set; }
+        public IShoppingCartRepository ShoppingCart { get; private set; }
+        public IApplicationUserRepository ApplicationUser { get; private set; }
         public UnitOfWork(AppDbContext context)
         {
             this.context = context;
             Category = new CategoryRepository(context);
             Product = new ProductRepository(context);
+            ShoppingCart=new ShoppingCartRepository(context);
+            ApplicationUser = new ApplicationUserRepository(context);
         }
 
         public void Save()

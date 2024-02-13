@@ -18,10 +18,12 @@
             <thead>
                 <tr>
                     <th scope="col">Product Name</th>
+                    <th scope="col" class="w-25">Image</th>
                     <th scope="col">Description</th>
                     <th scope="col">Price</th>
                     <th scope="col">Stock Quantity</th>
                     <th scope="col">Brand</th>
+                    <th scope="col">Action</th>
                    
                     
 
@@ -32,7 +34,10 @@
         @foreach(var obj in Model){
         <tr>
             <td>@obj.ProductName</td>
-            
+            <td > <img src=@obj.ImageUrl width="25%"
+                  style="border-radius:1px; border:1px solid #bbb9b9;" />
+                            
+            </td>
             <td>@obj.Description</td>
             <td>@obj.Price</td>
             <td>@obj.StockQuantity</td>
