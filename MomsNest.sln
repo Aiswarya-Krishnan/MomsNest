@@ -5,11 +5,11 @@ VisualStudioVersion = 17.9.34518.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MomsNest", "MomsNest\MomsNest.csproj", "{6AED9BF9-8746-4667-9153-D19377534623}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MomsNest.DataAccess", "MomsNest.DataAccess\MomsNest.DataAccess.csproj", "{434D50D2-9A41-456F-BF0F-547A1CAB7BF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MomsNest.DataAccess", "MomsNest.DataAccess\MomsNest.DataAccess.csproj", "{434D50D2-9A41-456F-BF0F-547A1CAB7BF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MomsNest.Models", "MomsNest.Models\MomsNest.Models.csproj", "{51730A99-7C4E-49E7-BD2F-665767715032}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MomsNest.Models", "MomsNest.Models\MomsNest.Models.csproj", "{51730A99-7C4E-49E7-BD2F-665767715032}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Utilities.csproj", "{745BD3FC-336A-48C4-B73E-11221BDF885D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "Utilities\Utilities.csproj", "{745BD3FC-336A-48C4-B73E-11221BDF885D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

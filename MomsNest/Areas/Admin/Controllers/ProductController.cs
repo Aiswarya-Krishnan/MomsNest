@@ -24,7 +24,7 @@ namespace MomsNest.Areas.Admin.Controllers
             }
             public IActionResult Index()
             {
-              List<Product>PrductList = context.Product.GetAll().ToList();
+              List<Product>PrductList = context.Product.GetAll(includeProperties: "Category").ToList();
             
                 return View(PrductList);
             }
@@ -145,6 +145,7 @@ namespace MomsNest.Areas.Admin.Controllers
         //}
 
         /*-----Delete-----*/
+        
         public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
@@ -175,6 +176,13 @@ namespace MomsNest.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-
+        #region API calls
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<Product> PrductList = context.Product.GetAll(includeProperties: "Category").ToList();
+            return Json(new { data= PrductList});
+        }
+        #endregion
     }
 }

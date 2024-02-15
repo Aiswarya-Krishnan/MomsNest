@@ -17,6 +17,9 @@ namespace MomsNest.DataAccess.Repository
         public IProductRepository Product { get; private set; }
         public IShoppingCartRepository ShoppingCart { get; private set; }
         public IApplicationUserRepository ApplicationUser { get; private set; }
+
+        public IOrderHeaderRepository OrderHeader { get; private set; }
+        public IOrderDetailsRepository OrderDetails { get; private set; }
         public UnitOfWork(AppDbContext context)
         {
             this.context = context;
@@ -24,6 +27,9 @@ namespace MomsNest.DataAccess.Repository
             Product = new ProductRepository(context);
             ShoppingCart=new ShoppingCartRepository(context);
             ApplicationUser = new ApplicationUserRepository(context);
+            OrderHeader = new OrderHeaderRepository(context);
+            OrderDetails = new OrderDetailsRepository(context);
+
         }
 
         public void Save()
