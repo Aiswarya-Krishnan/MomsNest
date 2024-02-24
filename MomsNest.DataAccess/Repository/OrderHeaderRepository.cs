@@ -24,5 +24,32 @@ namespace MomsNest.DataAccess.Repository
     {
         _context.OrderHeader.Update(obj);
     }
-}
+
+		public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
+		{
+			var orderFromDDb=_context.OrderHeader.FirstOrDefault(u=>u.OrderHeaderId== id);
+            if(orderFromDDb!=null) 
+            {
+                orderFromDDb.OrderStatus= orderStatus;
+                if (!string.IsNullOrEmpty(paymentStatus))
+                {
+                    orderFromDDb.PaymentStatus= paymentStatus;
+                }
+            }
+		}
+
+		public void UpdateStripePaymentID(int id, string sessionId, string paymentIntentId)
+		{
+			var orderFromDDb = _context.OrderHeader.FirstOrDefault(u => u.OrderHeaderId == id);
+            if(!string.IsNullOrEmpty(sessionId))
+            {
+                orderFromDDb.SessionId = sessionId;
+            }
+			if (!string.IsNullOrEmpty(paymentIntentId))
+			{
+				orderFromDDb.PaymentIntentId = paymentIntentId;
+                orderFromDDb.OrderDate = DateTime.Now;
+			}
+		}
+	}
 }

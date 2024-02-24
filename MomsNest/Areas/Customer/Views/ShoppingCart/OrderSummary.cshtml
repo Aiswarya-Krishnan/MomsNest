@@ -1,4 +1,4 @@
-﻿@model ShoppingCartViewModel
+﻿   @model ShoppingCartViewModel
 
 
 <form method="post">
@@ -102,7 +102,22 @@
 									<small class="text-info">Total </small>
 									<strong class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</strong>
 								</li>
+
 							</ul>
+							<div class="row my-1">
+								<div class="col-3">
+									<label>Payment Method:</label>
+								</div>
+								<div class="col-9">
+									<select asp-for="OrderHeader.PayId" required class="form-control">
+										<option value="">Select Payment Method</option>
+										<option value="COD">Cash on Delivery</option>
+										<option value="NetBank">Net Banking</option>
+										<option value="Card">Credit or Debit Card</option>
+									</select>
+									<span asp-validation-for="OrderHeader.PayId" class="text-danger"></span>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

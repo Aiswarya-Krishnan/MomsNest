@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MomsNest.DataAccess.Repository;
 using MomsNest.Models;
 using MomsNest.Models.ViewModels;
+using Stripe.Checkout;
 using System.Security.Claims;
 using Utilities;
 
@@ -151,8 +152,8 @@ namespace MomsNest.Areas.Customer.Controllers
             }
             if(applicationUser != null)
             {
-
-            }
+				
+			}
 
             return RedirectToAction(nameof(OrderConfirmation), new { orderId = shoppingCartViewModel.OrderHeader.OrderHeaderId });
 
@@ -160,6 +161,7 @@ namespace MomsNest.Areas.Customer.Controllers
 
         public IActionResult OrderConfirmation(int orderId)
         {
+           
             return View(orderId);                                                           
         }
 

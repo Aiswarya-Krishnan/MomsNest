@@ -16,10 +16,12 @@ builder.Services.AddDbContext<AppDbContext>(options=>options.UseSqlServer(builde
 
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
 builder.Services.AddRazorPages();
+
 
 builder.Services.ConfigureApplicationCookie(options => {
     options.LoginPath = $"/Identity/Account/Login";
@@ -28,8 +30,15 @@ builder.Services.ConfigureApplicationCookie(options => {
 
 });
 
+//Add email configuration
+var emailConfig = builder.Configuration
+		.GetSection("EmailConfiguration")
+		.Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
+
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 

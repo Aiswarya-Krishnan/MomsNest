@@ -26,6 +26,7 @@ namespace MomsNest.Models
         public string? Carrier { get; set; }
 
         public string? SessionId {  get; set; }
+        public string PayId { get; set; }
         public string? PaymentIntentId { get; set;}
         [Required]
         public string PhoneNumber { get; set; }

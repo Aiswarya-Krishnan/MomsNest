@@ -14,17 +14,20 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using MomsNest.Models;
 
 namespace MomsNest.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            this.userManager = userManager;
             _logger = logger;
         }
 
@@ -82,6 +85,7 @@ namespace MomsNest.Areas.Identity.Pages.Account
             /// </summary>
             [Display(Name = "Remember me?")]
             public bool RememberMe { get; set; }
+            public bool isBlocked { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -110,8 +114,19 @@ namespace MomsNest.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                var user = await userManager.FindByEmailAsync(Input.Email);
+
+                if (user != null)
+                {
+                    if (user.IsBlocked)
+                    {
+                        ModelState.AddModelError(string.Empty, "Your account has been blocked. Please contact the administrator.");
+                        return Page();
+                    }
+                }
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+               
+               
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
