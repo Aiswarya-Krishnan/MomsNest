@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MomsNest.DataAccess.Repository;
 using MomsNest.Models;
 using System.Diagnostics;
@@ -14,6 +15,7 @@ namespace MomsNest.Areas.Customer.Controllers
         
         private readonly IUnitOfWork unitOfWork;
 
+
         public HomeController(IUnitOfWork unitOfWork)
         {
             
@@ -23,9 +25,11 @@ namespace MomsNest.Areas.Customer.Controllers
         public IActionResult Index()
         {
             List<Product> PrductList = unitOfWork.Product.GetAll().ToList();
+            List<Category> categories = unitOfWork.Category.GetAll().ToList();
+            ViewBag.Categories = categories;
             return View(PrductList);
         }
-
+       
         public IActionResult Details(int id)
         {
             ShoppingCart cart = new()

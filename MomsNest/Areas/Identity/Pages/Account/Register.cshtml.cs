@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using MomsNest.Models;
 using Utilities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MomsNest.Areas.Identity.Pages.Account
 {
@@ -140,36 +141,38 @@ namespace MomsNest.Areas.Identity.Pages.Account
                     Value = i
                 })
             };
-           
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
-
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    Name = Input.Name,
+                    StreetAddress = Input.StreetAddress,
+                    City = Input.City,
+                    State = Input.State,
+                    PostCode = Input.PostCode,
+                    PhoneNumber = Input.PhoneNumber,
+                    EmailConfirmed = false,
+                    TwoFactorEnabled = true // Enable Two-Factor Authentication
+                };
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                user.Name=Input.Name;
-                user.StreetAddress = Input.StreetAddress;
-                user.City = Input.City;
-                user.State = Input.State;
-                user.PostCode = Input.PostCode;
-                user.PhoneNumber = Input.PhoneNumber;
-				// Ensure email confirmation
-				user.EmailConfirmed = true;
-
-				var result = await _userManager.CreateAsync(user, Input.Password);
+                var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    // If user has selected a role, assign it
                     if (!string.IsNullOrEmpty(Input.Role))
                     {
                         await _userManager.AddToRoleAsync(user, Input.Role);
@@ -179,30 +182,21 @@ namespace MomsNest.Areas.Identity.Pages.Account
                         await _userManager.AddToRoleAsync(user, StatDetails.Role_User);
                     }
 
-					//await _userManager.SetTwoFactorEnabledAsync(user, true);
+                    // Generate email confirmation token
+                    var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+                    //var callbackUrl = Url.Page(
+                    //    "/Account/ConfirmEmail",
+                    //    pageHandler: null,
+                    //    values: new { area = "Identity", userId = user.Id, code = emailConfirmationToken, returnUrl = returnUrl },
+                    //    protocol: Request.Scheme);
 
-					var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
-
-                    var message = new Message(new string[] { "aiswaryakrishnan998@gmail.com" }, "Test", "TestEmail");
-                    _emailSender.SendEmail(message);
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+                    // Send email with confirmation link
+                    var mes = new Message(new string[] { user.Email }, "Authentication token", token);
+                    _emailSender.SendEmail(mes);
+                    // Redirect user to the OTP verification page
+                    return RedirectToPage("/Account/VerifyOTP", new { email = user.Email, returnUrl = returnUrl });
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -212,6 +206,7 @@ namespace MomsNest.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
 
         private ApplicationUser CreateUser()
         {
@@ -235,6 +230,7 @@ namespace MomsNest.Areas.Identity.Pages.Account
             }
             return (IUserEmailStore<ApplicationUser>)_userStore;
         }
+
 
     }
 }

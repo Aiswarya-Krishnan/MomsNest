@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using MomsNest.Models
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -58,6 +60,20 @@
                                 </ul>
                             </li>
                         }
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu text-dark" aria-labelledby="navbarDropdown">
+                                @foreach (var category in ViewBag.Categories as List<Category>)
+                                {
+                                    <li class="dropdown-item text-dark">
+                                        <a href="#" class="nav-link text-dark">@category.Name</a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+
                         <li class="nav-item ">
                             <a class="nav-link " asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index">
                                 <i class="bi bi-cart"></i>&nbsp;

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using MomsNest.Models;
+using Utilities;
 
 namespace MomsNest.Areas.Identity.Pages.Account
 {
@@ -19,9 +20,9 @@ namespace MomsNest.Areas.Identity.Pages.Account
     public class RegisterConfirmationModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IEmailSender _sender;
+        private readonly IEmailService _sender;
 
-        public RegisterConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(UserManager<ApplicationUser> userManager, IEmailService sender)
         {
             _userManager = userManager;
             _sender = sender;
