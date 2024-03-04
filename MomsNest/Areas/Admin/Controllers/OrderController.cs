@@ -65,6 +65,23 @@ namespace MomsNest.Areas.Admin.Controllers
 
             context.OrderHeader.UpdateStatus(orderHeader.OrderHeaderId,StatDetails.StatusCancelled,StatDetails.StatusCancelled);
             context.Save();
+
+            var orderDetails = context.OrderDetails.GetAll(u => u.OrderHeader_ID == orderHeader.OrderHeaderId, includeProperties: "Product");
+
+            // Increment stock quantity for each product in the order
+            foreach (var orderDetail in orderDetails)
+            {
+                var product = orderDetail.Product;
+                if (product != null)
+                {
+                    product.StockQuantity += orderDetail.Count;
+                    context.Product.Update(product);
+                }
+            }
+
+            context.Save();
+
+
             TempData["Success"] = "Order Cancelled  successfully";
             return RedirectToAction(nameof(Index));
 

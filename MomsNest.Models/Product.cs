@@ -24,7 +24,7 @@ namespace MomsNest.Models
         [Range(1,25000)]
         public decimal Price { get; set; }
         [Required]
-        [Range(1, 200)]
+        [Range(0, 200)]
         [Display(Name ="Stock Quantity")]
         public int StockQuantity { get; set; }
         [Required]

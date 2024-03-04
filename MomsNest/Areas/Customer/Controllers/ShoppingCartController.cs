@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MomsNest.DataAccess.Repository;
 using MomsNest.Models;
 using MomsNest.Models.ViewModels;
+using Stripe;
 using Stripe.Checkout;
 using System.Security.Claims;
 using Utilities;
@@ -124,12 +125,25 @@ namespace MomsNest.Areas.Customer.Controllers
             shoppingCartViewModel.OrderHeader.ApplicationUserId=userId;
 			ApplicationUser applicationUser = unitOfWork.ApplicationUser.Get(u => u.Id == userId);
 
-			foreach (var pric in shoppingCartViewModel.ShoppingCartList)
-			{
-				pric.Price = GetPrice(pric);
-				shoppingCartViewModel.OrderHeader.OrderTotal += (pric.Price * pric.Count);
-			}
-			if (applicationUser != null)
+            foreach (var pric in shoppingCartViewModel.ShoppingCartList)
+            {
+                pric.Price = GetPrice(pric);
+                shoppingCartViewModel.OrderHeader.OrderTotal += (pric.Price * pric.Count);
+
+                // Retrieve the product from the repository by its ID
+                var product = unitOfWork.Product.Get(p => p.ProductId == pric.Product_ID);
+
+                if (product != null)
+                {
+                    // Reduce the stock quantity by one
+                    product.StockQuantity -= pric.Count;
+                    unitOfWork.Product.Update(product);
+                    unitOfWork.Save();
+                }
+            }
+
+
+            if (applicationUser != null)
             {
                 shoppingCartViewModel.OrderHeader.PaymentStatus = StatDetails.PaymentStatusPending;
                 shoppingCartViewModel.OrderHeader.OrderStatus = StatDetails.StatusPending;
@@ -150,7 +164,11 @@ namespace MomsNest.Areas.Customer.Controllers
                 unitOfWork.OrderDetails.Add(orderDetails);
                 unitOfWork.Save();
             }
-            if(applicationUser != null)
+
+            unitOfWork.ShoppingCart.RemoveRange(shoppingCartViewModel.ShoppingCartList);
+            unitOfWork.Save();
+
+            if (applicationUser != null)
             {
 				
 			}

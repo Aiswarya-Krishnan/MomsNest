@@ -25,6 +25,12 @@
                                 <p class="card-title text-dark  text-center">
                                     @Product.Description
                                 </p>
+                                @if (Product.StockQuantity < 1)
+                                {
+                                    <p class="card-title text-danger text-center">
+                                        Out of Stock
+                                    </p>
+                                }
                             </div>
                         </div>
                         <div>

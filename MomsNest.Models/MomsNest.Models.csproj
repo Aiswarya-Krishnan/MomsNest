@@ -11,6 +11,7 @@
 		</FrameworkReference>
 	</ItemGroup>
 	<ItemGroup>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.1" />
 	  <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.1" />
 	  <PackageReference Include="Stripe.net" Version="43.14.0" />
 	</ItemGroup>

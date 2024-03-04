@@ -26,6 +26,10 @@ namespace MomsNest.DataAccess.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Category>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
             modelBuilder.Entity<Category>().HasData(
                 new Category { CategoryId=1,Name="Footwear",DisplayOrder=1},
                 new Category { CategoryId = 2, Name = "Toys", DisplayOrder = 2 },

@@ -25,12 +25,27 @@ namespace MomsNest.Areas.Customer.Controllers
         public IActionResult Index()
         {
             List<Product> PrductList = unitOfWork.Product.GetAll().ToList();
-            List<Category> categories = unitOfWork.Category.GetAll().ToList();
+            var categories = unitOfWork.Category.GetAll().ToList();
             ViewBag.Categories = categories;
             return View(PrductList);
+            
         }
-       
-        public IActionResult Details(int id)
+
+        public IActionResult ProductByCategory(int? category)
+        {
+            IEnumerable<Product> productList = unitOfWork.Product.GetAll().ToList();
+            var categories = unitOfWork.Category.GetAll().ToList();
+            ViewBag.Categories = categories; // Pass categories to the layout
+
+            if (category != null)
+            {
+                productList = productList.Where(p => p.CategoryID == category);
+            }
+
+            return View(productList.ToList());
+        }
+
+            public IActionResult Details(int id)
         {
             ShoppingCart cart = new()
             {
@@ -70,6 +85,33 @@ namespace MomsNest.Areas.Customer.Controllers
             TempData["Success"] = "Cart Updated successfully";
             return RedirectToAction(nameof(Index));
         }
+        public IActionResult Search(string searchString, int? categoryId)
+        {
+            // Get all products
+            IEnumerable<Product> productList = unitOfWork.Product.GetAll().ToList();
+
+            // Filter by category if provided
+            if (categoryId != null)
+            {
+                productList = productList.Where(p => p.CategoryID == categoryId);
+            }
+
+            // Filter by search string if provided
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.Trim().ToLower(); // Convert search string to lowercase for case-insensitive comparison
+
+                // Filter by product name or category name containing the search string
+                productList = productList.Where(p =>
+                    p.ProductName.ToLower().Contains(searchString) ||
+                    p.Category.Name.ToLower().Contains(searchString));
+            }
+
+            var categories = unitOfWork.Category.GetAll().ToList();
+            ViewBag.Categories = categories; // Pass categories to the layout
+
+            return View("ProductByCategory", productList.ToList());
+        }
 
 
         public IActionResult Privacy()
@@ -82,5 +124,8 @@ namespace MomsNest.Areas.Customer.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+        
     }
 }

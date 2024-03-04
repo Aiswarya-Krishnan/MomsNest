@@ -1,0 +1,175 @@
+﻿@model List<Product>
+
+<form method="get" action="@Url.Action("Search", "Home", new { area = "Customer" })" class="d-flex justify-content-end">
+    <div class="form-group ">
+        <input type="text" id="search" name="searchString" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary h-50  mx-1">Search</button>
+</form>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-3 border-end border-gray">
+            <h3><u>Filter By...</u></h3>
+            <div class="form-group">
+                <label for="color">Color:</label>
+                <select id="color" class="form-control">
+                    <option value="">All</option>
+                    @foreach (var color in Model.Select(p => p.Color).Distinct())
+                    {
+                        <option value="@color">@color</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="material">Material:</label>
+                <select id="material" class="form-control">
+                    <option value="">All</option>
+                    @foreach (var material in Model.Select(p => p.Material).Distinct())
+                    {
+                        <option value="@material">@material</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="price">Price Range:</label>
+                <select id="price" class="form-control">
+                    <option value="">All</option>
+                    <option value="250 - 500">250 - 500</option>
+                    <option value="500 - 1000">500 - 1000</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="row pb-4 bg-light-gray p-3">
+                @foreach (var Product in Model)
+                {
+                    <div class="col-lg-4 h-75 col-sm-6 product-card" data-color="@Product.Color" data-material="@Product.Material" data-price="@Product.Price">
+                        <div class="row h-75 p-2">
+                            <div class="col-12 p-1">
+                                <div class="card border-0 p-3  shadow border-top border-5 rounded ">
+                                    <img src="@Product.ImageUrl" class="card-img-top h-75 rounded " />
+                                    <div class="card-body ">
+                                        <div class="p-lg-1">
+                                            <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">
+                                                @Product.ProductName
+                                            </p>
+                                            <p class="card-title  text-warning text-center">
+                                                by <b> @Product.Brand</b>
+                                            </p>
+                                        </div>
+                                        <div class="p-lg-1">
+                                            <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">
+                                                @Product.Price.ToString("c")
+                                            </p>
+                                            <p class="card-title text-dark  text-center">
+                                                @Product.Description
+                                            </p>
+                                            @if (Product.StockQuantity < 1)
+                                            {
+                                                <p class="card-title text-danger text-center">
+                                                    Out of Stock
+                                                </p>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <a asp-action="Details" asp-route-id="@Product.ProductId" class="btn btn-primary bg-gradient border-0 form-control">
+                                            Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+</div>
+
+
+    <div class="d-flex justify-content-center mb-5">
+        <ul class="pagination">
+            @{
+                var currentPage = 1; // Initial page
+                var totalPages = (int)Math.Ceiling(Model.Count / 6.0); // Assuming 6 products per page
+            }
+            <li class="page-item @((currentPage == 1) ? "disabled" : "")">
+                <a class="page-link" href="#" onclick="changePage(@currentPage - 1)">Previous</a>
+            </li>
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="#" onclick="changePage(@i)">@i</a>
+                </li>
+            }
+            <li class="page-item @((currentPage == totalPages) ? "disabled" : "")">
+                <a class="page-link" href="#" onclick="changePage(@currentPage + 1)">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#color, #material, #price').change(filterProducts);
+        });
+
+
+
+        function filterProducts() {
+            var selectedColor = $('#color').val();
+            var selectedMaterial = $('#material').val();
+            var selectedPriceRange = $('#price').val();
+
+            $('.product-card').each(function () {
+                var productColor = $(this).data('color');
+                var productMaterial = $(this).data('material');
+                var productPrice = parseFloat($(this).data('price'));
+
+                var showProduct = true;
+
+                if (selectedColor !== '' && productColor !== selectedColor) {
+                    showProduct = false;
+                }
+                if (selectedMaterial !== '' && productMaterial !== selectedMaterial) {
+                    showProduct = false;
+                }
+                if (selectedPriceRange !== '' && !isPriceInRange(productPrice, selectedPriceRange)) {
+                    showProduct = false;
+                }
+
+                if (showProduct) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        function isPriceInRange(price, range) {
+            var rangeValues = range.split('-');
+            var minPrice = parseFloat(rangeValues[0]);
+            var maxPrice = parseFloat(rangeValues[1]);
+
+            return price >= minPrice && price <= maxPrice;
+        }
+        var currentPage = 1; // Initial page
+        var totalPages = Math.ceil(@(Model.Count) / 6); // Assuming 6 products per page
+
+        function changePage(page) {
+            if (page < 1 || page > totalPages || page === currentPage) {
+                return;
+            }
+
+            currentPage = page;
+            filterProducts(); // You may need to adjust this function according to your pagination needs
+        }
+
+    </script>
+}

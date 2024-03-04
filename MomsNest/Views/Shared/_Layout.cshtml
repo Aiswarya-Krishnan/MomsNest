@@ -60,20 +60,28 @@
                                 </ul>
                             </li>
                         }
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Categories
-                            </a>
-                            <ul class="dropdown-menu text-dark" aria-labelledby="navbarDropdown">
-                                @foreach (var category in ViewBag.Categories as List<Category>)
+                        @if (Context.Request.Path == "/"
+                        || (Context.Request.Path.StartsWithSegments("/Customer/Home")
+                        || (Context.Request.Path.StartsWithSegments("/Customer/ProductByCategory")
+                        && Context.Request.Query.Count == 0)))
+                    {                     
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Shop by Category
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                @if (ViewBag.Categories != null && ViewBag.Categories.Count > 0)
+                             { 
+                                @foreach (var category in ViewBag.Categories)
                                 {
-                                    <li class="dropdown-item text-dark">
-                                        <a href="#" class="nav-link text-dark">@category.Name</a>
-                                    </li>
+                                    <li><a class="dropdown-item" href="@Url.Action("ProductByCategory", "Home", new { area = "Customer", category = category.CategoryId })">@category.Name</a></li>
                                 }
+                              }
                             </ul>
-                        </li>
-
+                        </div>
+                        
+                        
+                    }
                         <li class="nav-item ">
                             <a class="nav-link " asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index">
                                 <i class="bi bi-cart"></i>&nbsp;

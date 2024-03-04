@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace MomsNest.Models
@@ -10,6 +11,7 @@ namespace MomsNest.Models
 
         [Required]
         [MaxLength(40,ErrorMessage ="Maximum length is 40")]
+   
         public string Name { get; set; }
 
         [DisplayName("Display Order")]

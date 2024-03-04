@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using MomsNest.DataAccess.Repository;
 using MomsNest.Models;
 using Utilities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -230,6 +231,7 @@ namespace MomsNest.Areas.Identity.Pages.Account
             }
             return (IUserEmailStore<ApplicationUser>)_userStore;
         }
+        
 
 
     }
