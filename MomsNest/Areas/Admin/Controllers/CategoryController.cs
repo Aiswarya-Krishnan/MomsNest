@@ -42,6 +42,12 @@ namespace MomsNest.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                var existingCategory = context.Category.Get(c => c.Name == category.Name);
+                if (existingCategory != null)
+                {
+                    ModelState.AddModelError("Name", "Category name already exists.");
+                    return View(category); // Return the view with the error message
+                }
                 context.Category.Add(category);
                 context.Save();
                 TempData["Success"] = "Category Created successfully";

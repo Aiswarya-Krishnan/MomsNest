@@ -115,6 +115,9 @@ namespace MomsNest.DataAccess.Data
 
 
                 );
+            modelBuilder.Entity<Category>()
+              .HasIndex(c => c.Name)
+                .IsUnique();
         }
 
     }
