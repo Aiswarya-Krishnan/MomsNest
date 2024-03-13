@@ -21,7 +21,6 @@ namespace MomsNest.DataAccess.Data
         public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<OrderHeader> OrderHeader { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -20,6 +20,7 @@ namespace MomsNest.DataAccess.Repository
 
         public IOrderHeaderRepository OrderHeader { get; private set; }
         public IOrderDetailsRepository OrderDetails { get; private set; }
+
         public UnitOfWork(AppDbContext context)
         {
             this.context = context;
