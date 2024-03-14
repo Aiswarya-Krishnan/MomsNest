@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +29,8 @@ namespace MomsNest.Areas.Identity.Pages.Account
         public string ReturnUrl { get; set; }
         public string ErrorMessage { get; set; }
 
+        // Property to hold the time when OTP was generated
+        public DateTime OTPGeneratedTime { get; set; }
         public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
         {
             if (string.IsNullOrEmpty(email))
@@ -41,10 +44,14 @@ namespace MomsNest.Areas.Identity.Pages.Account
             // Clear error message
             ErrorMessage = null;
 
+            // Store the time when OTP is generated in TempData
+            TempData["OTPGeneratedTime"] = DateTime.UtcNow.ToString();
+
             return Page();
         }
 
         [HttpPost]
+
         public async Task<IActionResult> OnPostAsync(string email, string returnUrl = null)
         {
             if (!ModelState.IsValid)
@@ -67,8 +74,28 @@ namespace MomsNest.Areas.Identity.Pages.Account
                 ModelState.Remove("TwoStepModel.TwoFactorCode");
                 return RedirectToPage(new { email = email, returnUrl = returnUrl, errorMessage = ErrorMessage });
             }
-            
-              
+
+            // Retrieve the timestamp when OTP is generated from TempData
+            var tokenTimestampString = TempData.Peek("OTPGeneratedTime") as string;
+
+            if (tokenTimestampString == null || !DateTime.TryParse(tokenTimestampString, out var tokenTimestamp))
+            {
+                // Handle the case where the token timestamp is not available
+                ModelState.AddModelError(string.Empty, "OTP timestamp not available.");
+                ErrorMessage = "OTP timestamp not available.";
+                ModelState.Remove("TwoStepModel.TwoFactorCode");
+                return RedirectToPage(new { email = email, returnUrl = returnUrl, errorMessage = ErrorMessage });
+            }
+
+            // Check if OTP is expired
+            if (DateTime.UtcNow.Subtract(tokenTimestamp).TotalMinutes > 1)
+            {
+                ModelState.AddModelError(string.Empty, "OTP has expired.");
+                ErrorMessage = "OTP has expired.";
+                ModelState.Remove("TwoStepModel.TwoFactorCode");
+                return RedirectToPage(new { email = email, returnUrl = returnUrl, errorMessage = ErrorMessage });
+            }
+
             // OTP is valid, disable Two-Factor Authentication
             await _userManager.SetTwoFactorEnabledAsync(user, false);
 
@@ -77,5 +104,9 @@ namespace MomsNest.Areas.Identity.Pages.Account
             // Redirect user to the login page
             return Redirect("~/Identity/Account/Login?returnUrl=" + ReturnUrl);
         }
+
+
+
+
     }
 }

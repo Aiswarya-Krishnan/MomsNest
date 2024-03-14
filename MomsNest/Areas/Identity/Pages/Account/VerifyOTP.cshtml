@@ -10,19 +10,18 @@
             <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
 
             <div class="form-group">
-                <label asp-for="TwoStepModel.TwoFactorCode"></label>
+                <label asp-for="TwoStepModel.TwoFactorCode"> Enter OTP Here</label>
                 <input asp-for="TwoStepModel.TwoFactorCode" class="form-control" />
                 <span asp-validation-for="TwoStepModel.TwoFactorCode" class="text-danger"></span>
             </div>
 
             @if (!string.IsNullOrEmpty(Request.Query["errorMessage"]))
             {
-                <div class="alert alert-danger" role="alert">
+                <div class="alert alert-light  text-danger" role="alert">
                     @Request.Query["errorMessage"]
                 </div>
             }
-
-            <button type="submit" class="btn btn-primary mt-3">Verify OTP</button>
+            <button type="submit" class="btn btn-primary mt-2 ">Verify OTP</button>
         </form>
     </div>
 </div>
