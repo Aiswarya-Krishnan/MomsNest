@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MomsNest.DataAccess.Repository;
 using MomsNest.Models;
 using MomsNest.Models.ViewModels;
@@ -81,7 +82,21 @@ namespace MomsNest.Areas.Customer.Controllers
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-                shoppingCartViewModel = new()
+			var previousAddresses = unitOfWork.OrderHeader
+		   .GetAll(o => o.ApplicationUserId == userId)
+		   .Select(o => new SelectListItem
+		   {
+			   Text = $"{o.Name} , {o.StreetAddress}, {o.City}, {o.State}, {o.PostalCode} , {o.PhoneNumber} ",
+			   Value = o.StreetAddress // You can set this to any unique identifier of the address if needed
+		   })
+		   .Distinct() // Remove duplicates
+		   .ToList();
+
+			// Populate the dropdown options
+			ViewBag.PreviousAddresses = previousAddresses;
+
+
+			shoppingCartViewModel = new()
                 {
                     ShoppingCartList = unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserID == userId, includeProperties: "Product"),
                     OrderHeader = new()
