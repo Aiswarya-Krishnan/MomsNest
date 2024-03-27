@@ -21,7 +21,15 @@
                     @Request.Query["errorMessage"]
                 </div>
             }
-            <button type="submit" class="btn btn-primary mt-2 ">Verify OTP</button>
+            <button type="submit" class="btn btn-primary mt-2">Verify OTP</button>
+
         </form>
+        <form method="post" asp-page-handler="ResendOTP">
+            <input type="hidden" name="email" value="@Model.Email" />
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+
+            <button type="submit" class="btn btn-primary mt-2">Resend OTP</button>
+        </form>
+
     </div>
 </div>

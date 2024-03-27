@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using MomsNest.Models;
+using Utilities;
 
 namespace MomsNest.Areas.Identity.Pages.Account
 {
@@ -15,11 +16,14 @@ namespace MomsNest.Areas.Identity.Pages.Account
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<VerifyOTPModel> _logger;
+        private readonly IEmailService _emailSender;
 
-        public VerifyOTPModel(UserManager<ApplicationUser> userManager, ILogger<VerifyOTPModel> logger)
+
+        public VerifyOTPModel(UserManager<ApplicationUser> userManager, ILogger<VerifyOTPModel> logger,IEmailService emailSender)
         {
             _userManager = userManager;
             _logger = logger;
+            _emailSender = emailSender;
         }
 
         [BindProperty]
@@ -31,6 +35,7 @@ namespace MomsNest.Areas.Identity.Pages.Account
 
         // Property to hold the time when OTP was generated
         public DateTime OTPGeneratedTime { get; set; }
+
         public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
         {
             if (string.IsNullOrEmpty(email))
@@ -51,7 +56,6 @@ namespace MomsNest.Areas.Identity.Pages.Account
         }
 
         [HttpPost]
-
         public async Task<IActionResult> OnPostAsync(string email, string returnUrl = null)
         {
             if (!ModelState.IsValid)
@@ -105,8 +109,34 @@ namespace MomsNest.Areas.Identity.Pages.Account
             return Redirect("~/Identity/Account/Login?returnUrl=" + ReturnUrl);
         }
 
+        public async Task<IActionResult> OnPostResendOTPAsync(string email, string returnUrl = null)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("Email is required.");
+            }
 
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return BadRequest("Invalid user.");
+            }
 
+            // Generate new OTP
+            var newToken = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
 
+            // Send email with new OTP
+            // Assume _emailSender is your email sending service
+            var mes = new Message(new string[] { user.Email }, "Authentication token", newToken);
+            _emailSender.SendEmail(mes);
+
+            _logger.LogInformation("New OTP sent for user: {Email}", email);
+
+            // Store the time when OTP is generated in TempData
+            TempData["OTPGeneratedTime"] = DateTime.UtcNow.ToString();
+
+            // Redirect user back to the VerifyOTP page
+            return RedirectToPage(new { email = email, returnUrl = returnUrl });
+        }
     }
 }
