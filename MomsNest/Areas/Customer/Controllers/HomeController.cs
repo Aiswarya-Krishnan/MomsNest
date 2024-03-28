@@ -9,16 +9,16 @@ using System.Security.Claims;
 namespace MomsNest.Areas.Customer.Controllers
 {
     [Area("Customer")]
-  
+
     public class HomeController : Controller
     {
-        
+
         private readonly IUnitOfWork unitOfWork;
 
 
         public HomeController(IUnitOfWork unitOfWork)
         {
-            
+
             this.unitOfWork = unitOfWork;
         }
 
@@ -28,7 +28,7 @@ namespace MomsNest.Areas.Customer.Controllers
             var categories = unitOfWork.Category.GetAll().ToList();
             ViewBag.Categories = categories;
             return View(PrductList);
-            
+
         }
 
         public IActionResult ProductByCategory(int? category)
@@ -45,7 +45,7 @@ namespace MomsNest.Areas.Customer.Controllers
             return View(productList.ToList());
         }
 
-            public IActionResult Details(int id)
+        public IActionResult Details(int id)
         {
             ShoppingCart cart = new()
             {
@@ -53,7 +53,7 @@ namespace MomsNest.Areas.Customer.Controllers
                 Count = 1,
                 Product_ID = id
             };
-            
+
             return View(cart);
         }
 
@@ -64,7 +64,7 @@ namespace MomsNest.Areas.Customer.Controllers
             shoppingCart.Id = 0;
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            shoppingCart.ApplicationUserID= userId;
+            shoppingCart.ApplicationUserID = userId;
 
             ShoppingCart shoppingfromDDB = unitOfWork.ShoppingCart.Get(u => u.ApplicationUserID == userId &&
             u.Product_ID == shoppingCart.Product_ID);
@@ -126,6 +126,6 @@ namespace MomsNest.Areas.Customer.Controllers
         }
 
 
-        
+
     }
 }
