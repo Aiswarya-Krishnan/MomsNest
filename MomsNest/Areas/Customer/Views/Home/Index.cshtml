@@ -1,48 +1,87 @@
 ﻿@model List<Product>
 
-
-<div class="row pb-3">
-    @foreach (var Product in Model)
-    {
-        <div class="col-lg-3 h-75 col-sm-6">
-            <div class="row h-75 p-2">
-                <div class="col-12 p-1">
-                    <div class="card border-0 p-3  shadow border-top border-5 rounded ">
-                        <img src="@Product.ImageUrl" class="card-img-top h-75 rounded " />
-                        <div class="card-body ">
-                            <div class="p-lg-1">
-                                <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">
-                                    @Product.ProductName
-                                </p>
-                                <p class="card-title  text-warning text-center">
-                                    by  <b> @Product.Brand</b>
-                                </p>
-
-                            </div>
-                            <div class="p-lg-1">
-                                <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">
-                                    @Product.Price.ToString("c")
-                                </p>
-                                <p class="card-title text-dark  text-center">
-                                    @Product.Description
-                                </p>
-                                @if (Product.StockQuantity < 1)
-                                {
-                                    <p class="card-title text-danger text-center">
-                                        Out of Stock
-                                    </p>
-                                }
-                            </div>
-                        </div>
-                        <div>
-                            <a asp-action="Details" asp-route-id="@Product.ProductId" class="btn btn-primary bg-gradient border-0 form-control">
-                                Details
-                            </a>
+<div class="container">
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm" style="width: 100%; margin-bottom: 20px;">
+                    <!-- Added shadow-sm class -->
+                    <img class="card-img-top" src="@product.ImageUrl" alt="">
+                    <div class="card-body">
+                        <h4 class="card-title text-center">@product.ProductName</h4>
+                        <p class="card-title  text-warning text-center">
+                            by <b> @product.Brand</b>
+                        </p>
+                        <h5 class="text-center">@product.Price.ToString("c")</h5>
+                        <p class="card-text text-center">@product.Description</p>
+                        <div class="card-footer d-flex justify-content-center">
+                            <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-primary">Details</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-    }
+        }
+    </div>
 </div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation" class="mb-5">
+    <ul class="pagination justify-content-center">
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        @{
+            // Generate page links
+            for (int i = 1; i <= Math.Ceiling(Model.Count / 8.0); i++)
+            {
+                <li class="page-item"><a class="page-link" href="#">@i</a></li>
+            }
+        }
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- jQuery Library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var currentPage = 1;
+
+        // Show initial items
+        showItems();
+
+        // Pagination click events
+        $(".pagination .page-link").click(function (event) {
+            event.preventDefault();
+            var clickedPage = $(this).text();
+            if (clickedPage === "&laquo;") {
+                if (currentPage > 1) {
+                    currentPage--;
+                    showItems();
+                }
+            } else if (clickedPage === "&raquo;") {
+                var totalPages = Math.ceil(@Model.Count / 8.0);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showItems();
+                }
+            } else {
+                currentPage = parseInt(clickedPage);
+                showItems();
+            }
+        });
+
+        function showItems() {
+            var startIndex = (currentPage - 1) * 8;
+            var endIndex = startIndex + 8;
+            $('.container .row .col-lg-3').hide().slice(startIndex, endIndex).show();
+        }
+    });
+</script>

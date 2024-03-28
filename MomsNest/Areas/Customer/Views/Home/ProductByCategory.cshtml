@@ -88,16 +88,17 @@
             </div>
 
         </div>
-</div>
+    </div>
 
 
     <div class="d-flex justify-content-center mb-5">
         <ul class="pagination">
             @{
                 var currentPage = 1; // Initial page
-                var totalPages = (int)Math.Ceiling(Model.Count / 6.0); // Assuming 6 products per page
+                var itemsPerPage = 6; // Number of items per page
+                var totalPages = (int)Math.Ceiling(Model.Count / (double)itemsPerPage); // Calculate total pages
             }
-            <li class="page-item @((currentPage == 1) ? "disabled" : "")">
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
                 <a class="page-link" href="#" onclick="changePage(@currentPage - 1)">Previous</a>
             </li>
             @for (int i = 1; i <= totalPages; i++)
@@ -106,21 +107,39 @@
                     <a class="page-link" href="#" onclick="changePage(@i)">@i</a>
                 </li>
             }
-            <li class="page-item @((currentPage == totalPages) ? "disabled" : "")">
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
                 <a class="page-link" href="#" onclick="changePage(@currentPage + 1)">Next</a>
             </li>
         </ul>
     </div>
+
 </div>
 
 
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#color, #material, #price').change(filterProducts);
+            $('#color, #material, #price').change(function () {
+                filterProducts();
+                currentPage = 1; // Reset current page when filters change
+            });
+
+            filterProducts(); // Initial filtering
         });
 
+        var currentPage = 1; // Initial page
+        var itemsPerPage = 6; // Number of items per page
+        var totalProducts = @Model.Count; // Total number of products
+        var totalPages = Math.ceil(totalProducts / itemsPerPage); // Calculate total pages
 
+        function changePage(page) {
+            if (page < 1 || page > totalPages || page === currentPage) {
+                return;
+            }
+
+            currentPage = page;
+            filterProducts();
+        }
 
         function filterProducts() {
             var selectedColor = $('#color').val();
@@ -134,13 +153,21 @@
 
                 var showProduct = true;
 
-                if (selectedColor !== '' && productColor !== selectedColor) {
+                if (selectedColor && selectedColor !== productColor) {
                     showProduct = false;
                 }
-                if (selectedMaterial !== '' && productMaterial !== selectedMaterial) {
+                if (selectedMaterial && selectedMaterial !== productMaterial) {
                     showProduct = false;
                 }
-                if (selectedPriceRange !== '' && !isPriceInRange(productPrice, selectedPriceRange)) {
+                if (selectedPriceRange && !isPriceInRange(productPrice, selectedPriceRange)) {
+                    showProduct = false;
+                }
+
+                var productIndex = $(this).index() + 1; // Index of current product
+                var startIndex = (currentPage - 1) * itemsPerPage + 1; // Calculate start index for current page
+                var endIndex = Math.min(startIndex + itemsPerPage - 1, totalProducts); // Calculate end index for current page
+
+                if (productIndex < startIndex || productIndex > endIndex) {
                     showProduct = false;
                 }
 
@@ -150,6 +177,20 @@
                     $(this).hide();
                 }
             });
+
+            updatePagination();
+        }
+
+        function updatePagination() {
+            $('.pagination').empty(); // Clear existing pagination links
+
+            for (var i = 1; i <= totalPages; i++) {
+                $('.pagination').append(`
+                    <li class="page-item ${currentPage === i ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                    </li>
+                `);
+            }
         }
 
         function isPriceInRange(price, range) {
@@ -159,17 +200,5 @@
 
             return price >= minPrice && price <= maxPrice;
         }
-        var currentPage = 1; // Initial page
-        var totalPages = Math.ceil(@(Model.Count) / 6); // Assuming 6 products per page
-
-        function changePage(page) {
-            if (page < 1 || page > totalPages || page === currentPage) {
-                return;
-            }
-
-            currentPage = page;
-            filterProducts(); // You may need to adjust this function according to your pagination needs
-        }
-
     </script>
 }
