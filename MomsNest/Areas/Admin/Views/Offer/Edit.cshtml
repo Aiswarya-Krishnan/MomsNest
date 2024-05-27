@@ -1,0 +1,125 @@
+﻿@model MomsNest.Models.ViewModels.OfferViewModel
+
+<style>
+    .form-floating label {
+        margin-bottom: 0.5rem; /* Adjust this value as needed */
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-secondary bg-gradient py-3">
+                    <h2 class="text-white text-center">Edit Offer</h2>
+                </div>
+                <div class="card-body p-4">
+
+                    <form id="couponForm" method="post">
+                        <input asp-for="Offer.OfferId" hidden />
+
+                        <div class="form-floating mb-3">
+                            <label asp-for="Offer.OfferName"></label><br />
+                            <input asp-for="Offer.OfferName" type="text" class="form-control" />
+                            <span asp-validation-for="Offer.OfferName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <label for="typeSelect" class="form-label">Offer Type</label><br />
+                            <select asp-for="Offer.Offertype" id="typeSelect" class="form-control">
+                                <option value="" disabled>Select the Discount Type</option>
+                                @foreach (var type in Enum.GetValues(typeof(MomsNest.Models.Offer.OfferType)))
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Offer.Offertype" class="text-danger"></span>
+                        </div>
+                       
+                        <div id="categoryDropdown" class="form-floating mb-3" style="display: none;">
+                            <label asp-for="SelectedCategoryId" class="form-label">Select Category</label><br />
+                            <select asp-for="SelectedCategoryId" class="form-control">
+                                <option value="" selected>Select a category</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.CategoryId">@category.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SelectedCategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div id="productDropdown" class="form-floating mb-3" style="display: none;">
+                            <label asp-for="SelectedProductId" class="form-label">Select Product</label><br />
+                            <select asp-for="SelectedProductId" class="form-control">
+                                <option value="" selected>Select a product</option>
+                                @foreach (var product in Model.Products)
+                                {
+                                    <option value="@product.ProductId">@product.ProductName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SelectedProductId" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <label asp-for="Offer.OfferItem"></label><br />
+                            <input asp-for="Offer.OfferItem" type="text" class="form-control" />
+                            <span asp-validation-for="Offer.OfferItem" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <label asp-for="Offer.OfferDiscount"></label><br />
+                            <input asp-for="Offer.OfferDiscount" type="text" class="form-control" />
+                            <span asp-validation-for="Offer.OfferDiscount" class="text-danger"></span>
+                        </div>
+
+                        
+                        <div class="form-floating mb-3">
+                            <label asp-for="Offer.OfferDescription"></label><br />
+                            <input asp-for="Offer.OfferDescription" type="text" class="form-control" />
+                            <span asp-validation-for="Offer.OfferDescription" class="text-danger"></span>
+                        </div>
+                        <div class="row pt-2 mb-5">
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-primary form-control">Save Changes</button>
+                            </div>
+                            <div class="col-6">
+                                <a asp-controller="Offer" asp-action="Index" class="btn btn-outline-secondary form-control">Back To List</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#typeSelect').change(function () {
+                var selectedType = $(this).val();
+                if (selectedType === 'Category') {
+                    $('#categoryDropdown').show();
+                    $('#productDropdown').hide();
+                } else if (selectedType === 'Product') {
+                    $('#categoryDropdown').hide();
+                    $('#productDropdown').show();
+                } else {
+                    $('#categoryDropdown').hide();
+                    $('#productDropdown').hide();
+                }
+            });
+
+            // Add change event listeners to the category and product dropdowns
+            $('#SelectedCategoryId').change(function () {
+                var selectedCategoryName = $(this).find('option:selected').text();
+                $('#Offer_OfferItem').val(selectedCategoryName);
+            });
+
+            $('#SelectedProductId').change(function () {
+                var selectedProductName = $(this).find('option:selected').text();
+                $('#Offer_OfferItem').val(selectedProductName);
+            });
+        });
+    </script>
+}

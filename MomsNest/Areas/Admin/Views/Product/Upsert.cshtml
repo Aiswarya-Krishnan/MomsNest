@@ -1,0 +1,287 @@
+﻿
+@model ProductViewModel
+<head>
+    <!-- Cropper.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+  
+</head>
+<body>
+<div class="card shadow boarder-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 ">
+                <h2 class="text-white text-center py-2">@(Model.Product.ProductId != 0 ? "Update" : "Create") Product </h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="Product.ProductId" hidden />
+            <div class="row">
+                <div class="col-10">
+
+                    <div class="border p-3 ">
+
+                        <div class=" py-2 col-12">
+                            <label asp-for="Product.ProductName" class="ms-2 text-muted"></label>
+                            <input asp-for="Product.ProductName" type="text" class="form-control border-0 shadow" />
+                            <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+                        </div>
+                        <div class=" py-2 col-12">
+                            <label asp-for="Product.Description" class="ms-2 "></label>
+                            <input asp-for="Product.Description" type="text" class="form-control border-0 shadow" />
+                            <span asp-validation-for="Product.Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Product.Price" class="ms-2 "></label>
+                            <input asp-for="Product.Price" type="text" class="form-control border-0 shadow" />
+                            <span asp-validation-for="Product.Price" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Product.StockQuantity" class="ms-2"></label>
+                            <input asp-for="Product.StockQuantity" type="text" class="form-control border-0 shadow" />
+                            <span asp-validation-for="Product.StockQuantity" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Product.Brand" class="ms-2"></label>
+                            <input asp-for="Product.Brand" type="text" class="form-control border-0 shadow" />
+                            <span asp-validation-for="Product.Brand" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Product.Color" class="ms-2"></label>
+                            <input asp-for="Product.Color" type="text" class="form-control border-0 shadow" />
+                            <span asp-validation-for="Product.Color" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Product.Material" class="ms-2"></label>
+                            <input asp-for="Product.Material" type="text" class="form-control border-0 shadow" />
+                            <span asp-validation-for="Product.Material" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Product.Weight" class="ms-2"></label>
+                            <input asp-for="Product.Weight" type="text" class="form-control border-0 shadow" />
+                            <span asp-validation-for="Product.Weight" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Product.CategoryID" class="ms-2"></label>
+                            <select asp-for="@Model.Product.CategoryID" asp-items="@Model.CategoryList" type="text" class="form-select border-0 shadow">
+                                <option disabled selected>---Select Category---</option>
+                            </select>
+                            <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <label asp-for="Product.ProductImages" class="ms-2"></label>
+                            @if (Model.Product.ProductId != 0)
+                            {
+                                    <input type="file" id="fileInput" name="files" class="form-control border-0 shadow" multiple />
+                                }
+                            else
+                            {
+                                    <input type="file" id="fileInput" name="files" class="form-control border-0 shadow" required multiple />
+                                }
+                            @if (Model.Product.ProductImages != null)
+                            {
+                                foreach (var image in Model.Product.ProductImages)
+                                {
+                                    <input type="hidden" name="ProductImages" value="@image.ImageUrl" />
+                                }
+                            }
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                @if (Model.Product.ProductId != 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Create</button>
+                                }
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Product" asp-action="Index" class="btn-outline-secondary form-control b-2">Back To List</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">
+                    @if (Model.Product.ProductImages != null)
+                    {
+                        foreach (var image in Model.Product.ProductImages)
+                        {
+                            <div class="p-1 text-center">
+                                <img src="@Url.Content(image.ImageUrl)" style="margin-right:3px; width:200px;" /><br>
+                                <a asp-action="DeleteImage" class="btn-sm btn-danger" asp-route-ImageId="@image.productImageId">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </a>
+                            </div>
+                        }
+                    }
+
+                    <!-- Include a placeholder for image preview -->
+                    <div id="image-preview"></div>
+                    <button id="delete-preview" hidden>
+                        @* <i class="bi bi-trash-fill"></i> Delete *@
+                    </button>
+                </div>
+
+            </div>
+
+
+        </form>
+    </div>
+</div>
+<!-- Modal for image cropping -->
+    <div class="modal fade" id="cropImageModal" tabindex="-1" aria-labelledby="cropImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cropImageModalLabel">Crop Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="img-container">
+                        <img id="cropperImage" style="max-width: 100%;" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="cropButton">Crop & Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cropper.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let cropper;
+            const input = document.getElementById('fileInput');
+            const imagePreview = document.getElementById('image-preview');
+            const cropButton = document.getElementById('cropButton'); // Reference to the crop button
+            const filesArray = []; // Array to store file references
+
+            input.addEventListener('change', function () {
+                const files = this.files;
+                if (files && files.length > 0) {
+                    for (let i = 0; i < files.length; i++) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.width = '200px';
+                            img.className = 'img-thumbnail';
+                            imagePreview.appendChild(img);
+                            filesArray.push(files[i]); // Store the file reference
+                            img.addEventListener('click', function () {
+                                openCropModal(img, files[i]); // Pass the img element and file reference
+                            });
+
+                            const deleteBtn = document.createElement('button');
+                            deleteBtn.className = 'btn-sm btn-danger';
+                            deleteBtn.innerHTML = '<i class="bi bi-trash-fill"></i>Delete';
+                            deleteBtn.onclick = function () {
+                                const index = filesArray.indexOf(files[i]);
+                                if (index > -1) {
+                                    filesArray.splice(index, 1);
+                                    updateFileInput();
+                                }
+                                img.parentNode.removeChild(img);
+                                deleteBtn.parentNode.removeChild(deleteBtn);
+                            };
+                            imagePreview.appendChild(deleteBtn);
+                        };
+                        reader.readAsDataURL(files[i]);
+                    }
+                }
+            });
+
+            function openCropModal(img, file) {
+                const modal = new bootstrap.Modal(document.getElementById('cropImageModal'), {
+                    keyboard: false
+                });
+                const image = document.getElementById('cropperImage');
+                image.src = img.src; // Use the src of the passed img element
+                modal.show();
+
+                modal._element.addEventListener('shown.bs.modal', function () {
+                    // Destroy previous cropper instance if exists
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        viewMode: 3
+                    });
+
+                    // Reattach event listener to the crop button every time the modal is shown
+                    cropButton.addEventListener('click', cropAndSave);
+                });
+
+                // Function to handle crop and save
+                function cropAndSave() {
+                    if (cropper) {
+                        const canvas = cropper.getCroppedCanvas();
+                        if (canvas) {
+                            canvas.toBlob(function (blob) {
+                                const url = URL.createObjectURL(blob);
+                                img.src = url;
+
+                                // Create a new file from the blob and replace the original file in the filesArray
+                                const croppedFile = new File([blob], file.name, { type: blob.type });
+                                const index = filesArray.indexOf(file);
+                                if (index > -1) {
+                                    filesArray[index] = croppedFile;
+                                    updateFileInput();
+                                }
+
+                                cropper.destroy();
+                                cropper = null;
+                                modal.hide();
+                            }, file.type);
+                        } else {
+                            console.error('No crop made.');
+                        }
+                    } else {
+                        console.error('Cropper not initialized.');
+                    }
+                }
+
+                // Add event listener to the crop button initially
+                cropButton.addEventListener('click', cropAndSave);
+            }
+
+            // Update the file input with the current filesArray
+            function updateFileInput() {
+                const dataTransfer = new DataTransfer();
+                filesArray.forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+                input.files = dataTransfer.files;
+            }
+
+            // Intercept form submission to append cropped images
+            document.querySelector('form').addEventListener('submit', function (e) {
+                const dataTransfer = new DataTransfer();
+                filesArray.forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+                input.files = dataTransfer.files;
+            });
+        });
+    </script>
+
+
+    @* Partial for validation scripts *@
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+
+
+
+ 

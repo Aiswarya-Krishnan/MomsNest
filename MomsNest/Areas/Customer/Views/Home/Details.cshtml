@@ -1,0 +1,179 @@
+﻿@model ShoppingCart
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize stockQuantity with the value from Razor model
+        var stockQuantity = parseInt("@Model.Product.StockQuantity");
+
+        // Add event listener to the count input
+        var countInput = document.querySelector('input[name="Count"]');
+        var addToCartButton = document.getElementById('addToCartButton');
+
+        // Function to update button state based on count input value
+        function updateButtonState() {
+            var count = parseInt(countInput.value);
+            var errorMessageElement = document.getElementById('errorMessage');
+
+            // Check if count exceeds stockQuantity or if count is less than or equal to zero
+            if (count > stockQuantity || count <= 0) {
+                errorMessageElement.textContent = "Product out of stock";
+                errorMessageElement.classList.add('text-danger');
+                addToCartButton.disabled = true; // Disable the button
+            } else {
+                errorMessageElement.textContent = ""; // Clear the error message
+                errorMessageElement.classList.remove('text-danger');
+                addToCartButton.disabled = false; // Enable the button
+            }
+        }
+
+        // Add event listener to count input for real-time validation
+        countInput.addEventListener('input', function () {
+            updateButtonState();
+        });
+
+        // Check stock quantity and count on page load
+        updateButtonState();
+    });
+</script>
+
+
+
+
+<form method="post">
+    <!-- Hidden input for Product_ID -->
+    <input hidden asp-for="Product_ID" />
+
+    <!-- Card structure -->
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header bg-secondary bg-gradient text-light py-4">
+            <!-- Product name and brand -->
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h3 class="text-white text-uppercase">@Model.Product.ProductName</h3>
+                    <p class="text-white-50 fw-semibold mb-0">by @Model.Product.Brand</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Back to home button -->
+            <div class="py-3">
+                <div class="row">
+                    <div class="col-6 col-md-2 offset-lg-1 pb-1">
+                        <a asp-action="Index" class="btn btn-outline-primary bg-gradient mb-5 fw-semibold btn-sm text-uppercase">
+                            <small>Back to home</small>
+                        </a>
+                    </div>
+                </div>
+                <!-- Product details -->
+                <div class="row">
+                    <!-- Product image -->
+                    <div class="col-12 col-lg-3 offset-lg-1 text-center mx-5">
+                         @if (Model.Product.ProductImages != null && Model.Product.ProductImages.Count() > 0)
+                        {
+
+                            <div id="carouselExampleDark" class="carousel carousel-dark slide">
+                                <div class="carousel-indicators">
+
+                                    @foreach (var imageWithIndex in Model.Product.ProductImages.Select((image, index)=>new{ProductImage=image,Index=index}))
+                                    {
+                                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@imageWithIndex.Index"
+                                                class="@(imageWithIndex.Index==0?"active":"")" aria-current="true" aria-label="Slide 1"></button>
+                                      }
+                                </div>
+
+
+                                <div class="carousel-inner">
+
+                                    @foreach (var imageWithIndex in Model.Product.ProductImages.Select((image, index) => new { ProductImage = image, Index = index }))
+                                    {
+                                        <div class="@(imageWithIndex.Index==0?"carousel-item active":"carousel-item")">
+                                            <img src="@imageWithIndex.ProductImage.ImageUrl" class="d-block w-100 zoomable" alt="...">
+                                        </div>
+                                    }
+                                   
+                                   
+                                </div>
+
+
+                                @* //<button id="zoomInButton" class="btn btn-primary">+</button> *@
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+
+
+
+                        }
+
+                  </div>
+                    <div class="col-12 col-lg-6 offset-lg-1">
+                        <!-- Product description -->
+                        <div class="col-12 col-md-6 pb-4">
+                            
+                                <span class="badge">Category : @Model.Product.Category.Name </span>
+                            
+                        </div>
+                        <div class="row ps-2">
+                            <h6 class="text-dark text-opacity-50 ">DESCRIPTION : @Model.Product.Description</h6>
+                        </div>
+                        <div class="row ps-2">
+                            @if (@Model.Product.Discount != null && Model.Product.Discount!=0)
+                            {
+                                <p class="text-success text-opacity-50">
+                                    Discount: @Model.Product.Discount.00 RS
+                                </p>
+                                <h6 class="text-dark text-opacity-50 pb-2">
+                                    <s>Original Price: @Model.Product.Price</s>
+                                </h6>
+                                <h6 class="text-danger pb-2">
+                                    Discounted Price: @(Model.Product.Price  - (decimal)Model.Product.Discount)
+                                </h6>
+                            }
+                            else
+                            {
+                                <h6 class="text-dark text-opacity-50 pb-2">
+                                    Price: @Model.Product.Price
+                                </h6>
+                            }
+
+                        </div>
+                        <!-- Show out of stock message -->
+                        <div class="row ps-2">
+                            <p id="errorMessage" class="card-title text-danger"></p>
+                        </div>
+                        <!-- Count input -->
+                        <div class="row pl-2 mb-3">
+                            <div class="col-md-4">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text bg-primary text-white border-0 fw-semibold"
+                                          id="inputGroup-sizing-default">
+                                        Count
+                                    </span>
+                                    <input asp-for="Count" name="Count" type="number" value="1" class="form-control text-end"
+                                           aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Add to cart button -->
+                        <div class="row">
+                            <div class="col-12 col-md-6 pb-1">
+                                <button type="submit" class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold" id="addToCartButton" disabled>
+                                    Add to Cart
+                                </button>
+                                <button type="submit" asp-action="AddToWishlist" asp-controller="WishList" asp-route-productId="@Model.Product_ID" class="btn btn-warning bg-gradient w-100 mt-2 py-2 text-uppercase fw-semibold">
+                                    Add to Wishlist  <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

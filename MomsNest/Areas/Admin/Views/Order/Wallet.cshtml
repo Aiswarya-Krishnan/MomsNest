@@ -1,0 +1,103 @@
+﻿@model IEnumerable<OrderViewModel>
+
+
+@{
+    // Retrieve the total wallet amount from the ApplicationUser table
+    decimal totalWalletAmount = 0;
+    var allUsers = Model.Select(o => o.OrderHeader.ApplicationUser).Distinct();
+    foreach (var user in allUsers)
+    {
+        if (user != null)
+        {
+            totalWalletAmount += user.wallet ?? 0;
+        }
+    }
+@if (totalWalletAmount >= 0)
+{
+<h1 class="text-center">WALLET</h1>
+<p class="text-center">Here you can see all your cancelled orders</p>
+
+
+    @if (User.IsInRole("Admin"))
+     {
+        <table class="table table-striped table-hover table-bordered mt-2">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Customer Name</th>
+                <th>Total Wallet Amount</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                // Fetch distinct users and their total wallet amount
+                var userWalletAmounts = Model
+                .Select(o => o.OrderHeader.ApplicationUser)
+                .Distinct()
+                .Select((user, index) => new
+                {
+                    Index = index + 1,
+                    UserId = user.Id,
+                    UserName = user.Name,
+                    TotalWalletAmount = user.wallet ?? 0,
+                   
+                });
+            }
+
+            @foreach (var userWalletAmount in userWalletAmounts)
+            {
+                <tr>
+                    <td>@userWalletAmount.Index</td>
+                    <td>@userWalletAmount.UserName</td>
+                    <td>@userWalletAmount.TotalWalletAmount</td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <!-- Display the order details for non-admin users -->
+    <table class="table table-striped table-hover table-bordered mt-2">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Product Names</th>
+                <th>Order Total</th>
+                <th>Payment Method</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var orderViewModel in Model)
+            {
+                <tr>
+                    <!-- Apply the default status class to each row -->
+                    <td>@orderViewModel.OrderHeader.OrderHeaderId</td>
+                    <td>@orderViewModel.OrderHeader.ApplicationUser.Name</td>
+                    <td>
+                        <ul>
+                            @foreach (var detail in orderViewModel.OrderDetails)
+                            {
+                                <li>@detail.Product.ProductName</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>@orderViewModel.OrderHeader.OrderTotal</td>
+                    <td>@orderViewModel.OrderHeader.PaymentMethod</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="text-danger"> Total Wallet Balance - @totalWalletAmount</div>
+    }
+  
+}
+
+
+else{
+    <h1 class="text-info text-capitalize text-center mt-3">Your wallet is empty</h1>
+}
+}

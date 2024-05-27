@@ -1,0 +1,49 @@
+﻿@model MomsNest.Models.Category
+
+<div class="container mt-4">
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow border-0">
+            <div class="card-header bg-secondary bg-gradient py-3">
+                <h2 class="text-white text-center">Create Category</h2>
+            </div>
+        
+    <div class="card-body p-4">
+
+        <form method="post" class="row">
+            <div class="border p-3 ">
+                
+
+                <div class="form-floating py-2 col-12">
+                    <label asp-for="Name" class="ms-2"></label>
+                    <input asp-for="Name" type="text" class="form-control border-0 shadow"  />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-2 col-12">
+                    <label asp-for="DisplayOrder" class="ms-2"></label>
+                    <input asp-for="DisplayOrder" type="text" class="form-control border-0 shadow" class="ms-2" />
+                    <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                </div>
+                            <div class="row pt-2">
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-primary form-control">Create</button>
+                                </div>
+                                <div class="col-6">
+                                    <a asp-controller="Category" asp-action="Index" class="btn btn-outline-secondary form-control">Back To List</a>
+                                </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+            </div>
+        </div>
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

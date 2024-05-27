@@ -1,0 +1,147 @@
+﻿@model List<Product>
+
+<div id="carouselExampleSlidesOnly" class="carousel slide mb-4" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active mb-3">
+            <a href="https://localhost:7257/Customer/Home/ProductByCategory?category=5">
+                <img src="~/Images/WEB_BANNER_GIRLS_BABY_0-24_psd.jpg" class="d-block w-100">
+            </a>
+        </div>
+        <div class="carousel-item mb-3">
+            <a href="https://localhost:7257/Customer/Home/ProductByCategory?category=3">
+
+            <img src="~/Images/Hygienic.JPG" class="d-block w-100 h-25">
+            </a>
+
+        </div>
+        <div class="carousel-item mb-3">
+            <a href="https://localhost:7257/Customer/Home/ProductByCategory?category=4">
+                <img src="~/Images/WEB_BANNER_BOY2_CPkqVIY.jpg" class="d-block w-100">
+             </a>
+        </div>
+        
+        <div class="carousel-item mb-3">
+            <a href="https://localhost:7257/Customer/Home/ProductByCategory?category=1021">
+                <img src="~/Images/WEB-Banner-1400x400.jpg" class="d-block w-100">
+            </a>
+        </div>
+        <div class="carousel-item mb-3">
+            <a href="https://localhost:7257/Customer/Home/ProductByCategory?category=1019">
+                <img src="~/Images/footwear.JPG" class="d-block w-100 h-25">
+             </a>
+        </div>
+  </div>
+</div>
+
+
+
+
+<div class="container">
+    <div class="row">
+        @foreach (var product in Model)
+        {
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm" style="width: 100%; margin-bottom: 20px;">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <form method="post" asp-action="AddToWishlist" asp-controller="WishList" asp-route-productId="@product.ProductId" style="position: absolute; top: 10px; right: 10px;">
+                         
+                            <button type="submit" class="btn btn-link p-0">
+                                <i class="bi bi-heart" style="font-size: 16px"></i>
+                            </button>
+                        </form>
+                    }
+                    <!-- Added shadow-sm class -->
+                    <div class="card-img-top d-flex justify-content-center" style="height: 200px; margin-top: 20px;">
+                        @if (product.ProductImages != null && product.ProductImages.Count() > 0)
+                        {
+                            <a asp-action="Details" asp-controller="Home" asp-route-id="@product.ProductId" class="img-fluid"> <img src="@product.ProductImages.FirstOrDefault().ImageUrl" style="max-height: 100%; max-width: 100%;" alt="Product"> </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Details" asp-controller="Home" asp-route-id="@product.ProductId" class="img-fluid"> <img src="https://placehold.co/300x200" style="max-height: 100%; max-width: 100%;" alt="Product"> </a>
+                        }
+                    </div>
+
+                   <div class="card-body">
+                        <h4 class="card-title text-center">@product.ProductName</h4>
+                        <p class="card-title  text-warning text-center">
+                            by <b> @product.Brand</b>
+                        </p>
+                        <h5 class="text-center">@product.Price.ToString("c")</h5>
+                        <p class="card-text text-center">@product.Description</p>
+                        @if (@product.StockQuantity <= 0)
+                        {
+                            <p class="card-text text-danger text-center">Out Of Stock</p>
+                        }
+                        <div class="card-footer d-flex justify-content-center">
+                            <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-primary">Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation" class="mb-5">
+    <ul class="pagination justify-content-center">
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        @{
+            // Generate page links
+            for (int i = 1; i <= Math.Ceiling(Model.Count / 8.0); i++)
+            {
+                <li class="page-item"><a class="page-link" href="#">@i</a></li>
+            }
+        }
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- jQuery Library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var currentPage = 1;
+
+        // Show initial items
+        showItems();
+
+        // Pagination click events
+        $(".pagination .page-link").click(function (event) {
+            event.preventDefault();
+            var clickedPage = $(this).text();
+            if (clickedPage === "&laquo;") {
+                if (currentPage > 1) {
+                    currentPage--;
+                    showItems();
+                }
+            } else if (clickedPage === "&raquo;") {
+                var totalPages = Math.ceil(@Model.Count / 8.0);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showItems();
+                }
+            } else {
+                currentPage = parseInt(clickedPage);
+                showItems();
+            }
+        });
+
+        function showItems() {
+            var startIndex = (currentPage - 1) * 8;
+            var endIndex = startIndex + 8;
+            $('.container .row .col-lg-3').hide().slice(startIndex, endIndex).show();
+        }
+    });
+</script>

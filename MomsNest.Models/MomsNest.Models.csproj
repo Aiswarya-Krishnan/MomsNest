@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App">
+			
+		</FrameworkReference>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.1" />
+	  <PackageReference Include="Stripe.net" Version="43.14.0" />
+	  <PackageReference Include="X.PagedList.Mvc.Core" Version="8.4.7" />
+	</ItemGroup>
+
+</Project>

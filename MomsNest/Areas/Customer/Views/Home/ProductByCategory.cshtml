@@ -1,0 +1,207 @@
+﻿@model List<Product>
+
+<form method="get" action="@Url.Action("Search", "Home", new { area = "Customer" })" class="d-flex justify-content-end">
+    <div class="form-group ">
+        <input type="text" id="search" name="searchString" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary h-50  mx-1">Search</button>
+</form>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-3 border-end border-gray">
+            <h3><u>Filter By...</u></h3>
+            <div class="form-group">
+                <label for="color">Color:</label>
+                <select id="color" class="form-control">
+                    <option value="">All</option>
+                    @foreach (var color in Model.Select(p => p.Color).Distinct())
+                    {
+                        <option value="@color">@color</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="material">Material:</label>
+                <select id="material" class="form-control">
+                    <option value="">All</option>
+                    @foreach (var material in Model.Select(p => p.Material).Distinct())
+                    {
+                        <option value="@material">@material</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="price">Price Range:</label>
+                <select id="price" class="form-control">
+                    <option value="">All</option>
+                    <option value="250 - 500">250 - 500</option>
+                    <option value="500 - 1000">500 - 1000</option>
+                    <option value="1000 - 1500">1000 - 1500</option>
+                    <option value="1500 - 2000">1500 - 2000</option>
+
+                </select>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row pb-4 bg-light-gray p-3 d-flex flex-wrap align-items-stretch">
+                @foreach (var Product in Model)
+                {
+                    <div class="col-lg-4 col-md-6 product-card mb-4" data-color="@Product.Color" data-material="@Product.Material" data-price="@Product.Price">
+                        <div class="card border-0 shadow border-top border-5 mt-1 rounded h-100"> 
+                            <!-- Added h-100 class to make cards equal height -->
+                            @if (Product.ProductImages != null && Product.ProductImages.Count() > 0)
+                            {
+                                <a asp-action="Details" asp-controller="Home" asp-route-id="@Product.ProductId" class="img-fluid mt-1 mx-auto d-block" style="max-height: 200px;"><img src="@Product.ProductImages.FirstOrDefault().ImageUrl" class="card-img-top h-100" alt="Product"></a>
+                                <!-- Center the image vertically and limit the height -->
+                            }
+                            else
+                            {
+                                <a asp-action="Details" asp-controller="Home" asp-route-id="@Product.ProductId" class="img-fluid mx-auto d-block"><img src="https://placehold.co/300x200" class="card-img-top h-100" alt="Product"></a>
+                            }
+
+                            <div class="card-body">
+                                <div class="p-lg-1">
+                                    <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">
+                                        @Product.ProductName
+                                    </p>
+                                    <p class="card-title text-warning text-center">
+                                        by <b>@Product.Brand</b>
+                                    </p>
+                                </div>
+                                <div class="p-lg-1">
+                                    <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">
+                                        @Product.Price.ToString("c")
+                                    </p>
+                                    <p class="card-title text-dark text-center">
+                                        @Product.Description
+                                    </p>
+                                    @if (Product.StockQuantity < 1)
+                                    {
+                                        <p class="card-title text-danger text-center">
+                                            Out of Stock
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a asp-action="Details" asp-route-id="@Product.ProductId" class="btn btn-primary bg-gradient border-0 form-control">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+    <div class="d-flex justify-content-center mb-5">
+        <ul class="pagination">
+            @{
+                var currentPage = 1; // Initial page
+                var itemsPerPage = 6; // Number of items per page
+                var totalPages = (int)Math.Ceiling(Model.Count / (double)itemsPerPage); // Calculate total pages
+            }
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="#" onclick="changePage(@currentPage - 1)">Previous</a>
+            </li>
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="#" onclick="changePage(@i)">@i</a>
+                </li>
+            }
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" href="#" onclick="changePage(@currentPage + 1)">Next</a>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#color, #material, #price').change(function () {
+                filterProducts();
+                currentPage = 1; // Reset current page when filters change
+            });
+
+            filterProducts(); // Initial filtering
+        });
+
+        var currentPage = 1; // Initial page
+        var itemsPerPage = 6; // Number of items per page
+        var totalProducts = @Model.Count; // Total number of products
+        var totalPages = Math.ceil(totalProducts / itemsPerPage); // Calculate total pages
+
+        function changePage(page) {
+            if (page < 1 || page > totalPages || page === currentPage) {
+                return;
+            }
+
+            currentPage = page;
+            filterProducts();
+        }
+
+        function filterProducts() {
+            var selectedColor = $('#color').val();
+            var selectedMaterial = $('#material').val();
+            var selectedPriceRange = $('#price').val();
+
+            $('.product-card').each(function () {
+                var productColor = $(this).data('color');
+                var productMaterial = $(this).data('material');
+                var productPrice = parseFloat($(this).data('price'));
+
+                var showProduct = true;
+
+                // Check if selected color matches the product's color
+                if (selectedColor && selectedColor !== productColor) {
+                    showProduct = false;
+                }
+                // Check if selected material matches the product's material
+                if (selectedMaterial && selectedMaterial !== productMaterial) {
+                    showProduct = false;
+                }
+                // Check if selected price range includes the product's price
+                if (selectedPriceRange && !isPriceInRange(productPrice, selectedPriceRange)) {
+                    showProduct = false;
+                }
+
+                // Show or hide the product based on the filter conditions
+                if (showProduct) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            // Update pagination after filtering
+            updatePagination();
+        }
+        function updatePagination() {
+            $('.pagination').empty(); 
+
+            for (var i = 1; i <= totalPages; i++) {
+                $('.pagination').append(`
+                    <li class="page-item ${currentPage === i ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                    </li>
+                `);
+            }
+        }
+
+        function isPriceInRange(price, range) {
+            var rangeValues = range.split('-');
+            var minPrice = parseFloat(rangeValues[0]);
+            var maxPrice = parseFloat(rangeValues[1]);
+
+            return price >= minPrice && price <= maxPrice;
+        }
+    </script>
+}

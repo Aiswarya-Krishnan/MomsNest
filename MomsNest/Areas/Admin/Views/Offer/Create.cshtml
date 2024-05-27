@@ -1,0 +1,129 @@
+﻿@model OfferViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-secondary bg-gradient py-3">
+                    <h2 class="text-white text-center">Create Offer</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        <input asp-for="Offer.OfferId" hidden />
+
+                        <div class="form-floating mb-3">
+                            <label asp-for="Offer.OfferName" class="form-label">Offer Name</label><br />
+                            <input asp-for="Offer.OfferName" class="form-control" />
+                            <span asp-validation-for="Offer.OfferName" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="form-floating mb-3">
+                            <label for="typeSelect" class="form-label">Offer Type</label><br />
+                            <select asp-for="Offer.Offertype" id="typeSelect" class="form-control">
+                                <option value="" selected>Select the Offer Type</option>
+                                @foreach (var type in Enum.GetValues(typeof(Offer.OfferType)))
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Offer.Offertype" class="text-danger"></span>
+                        </div>
+
+
+                        <div id="categoryDropdown" class="form-floating mb-3" style="display: none;">
+                            <label asp-for="SelectedCategoryId" class="form-label">Select Category</label><br />
+                            <select asp-for="SelectedCategoryId" class="form-control">
+                                <option value="" selected>Select a category</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.CategoryId">@category.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SelectedCategoryId" class="text-danger"></span>
+                            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey("OfferItem"))
+                            {
+                                <div class="text-danger">
+                                    @Html.ValidationMessage("OfferItem")
+                                </div>
+                            }
+                        </div>
+
+                        <div id="productDropdown" class="form-floating mb-3" style="display: none;">
+                            <label asp-for="SelectedProductId" class="form-label">Select Product</label><br />
+                            <select asp-for="SelectedProductId" class="form-control">
+                                <option value="" selected>Select a product</option>
+                                @foreach (var product in Model.Products)
+                                {
+                                    <option value="@product.ProductId">@product.ProductName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SelectedProductId" class="text-danger"></span>
+                            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey("OfferItem"))
+                            {
+                                <div class="text-danger">
+                                    @Html.ValidationMessage("OfferItem")
+                                </div>
+                            }
+                        </div>
+
+
+
+                        <div class="form-floating mb-3">
+                            <label asp-for="Offer.OfferDiscount" class="form-label">Offer Discount</label><br />
+                            <input asp-for="Offer.OfferDiscount" class="form-control" />
+                            <span asp-validation-for="Offer.OfferDiscount" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <label asp-for="Offer.OfferDescription" class="form-label">Offer Description</label><br />
+                            <input asp-for="Offer.OfferDescription" class="form-control" />
+                            <span asp-validation-for="Offer.OfferDescription" class="text-danger"></span>
+                        </div>
+
+                        <div class="row pt-2 mb-5">
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-primary form-control">Create</button>
+                            </div>
+                            <div class="col-6">
+                                <a asp-controller="Offer" asp-action="Index" class="btn btn-outline-secondary form-control">Back To List</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#typeSelect').change(function () {
+                var selectedType = $(this).val();
+                if (selectedType === 'Category') {
+                    $('#categoryDropdown').show();
+                    $('#productDropdown').hide();
+                } else if (selectedType === 'Product') {
+                    $('#categoryDropdown').hide();
+                    $('#productDropdown').show();
+                } else {
+                    $('#categoryDropdown').hide();
+                    $('#productDropdown').hide();
+                }
+            });
+        });
+    </script>
+}
+@if (ViewData.ModelState.IsValid == false)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
