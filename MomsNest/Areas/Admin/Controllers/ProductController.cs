@@ -29,9 +29,9 @@ namespace MomsNest.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<Product> PrductList = context.Product.GetAll(includeProperties: "Category").ToList();
+            List<Product> ProductList = context.Product.GetAll(includeProperties: "Category").ToList();
 
-            return View(PrductList);
+            return View(ProductList);
         }
 
         /*--- Create----*/
@@ -183,7 +183,7 @@ namespace MomsNest.Areas.Admin.Controllers
 
             if (productToBeDeleted == null)
             {
-                return Json(new { sucess = false, message = "Eroor while deleting" });
+                return Json(new { sucess = false, message = "Error while deleting" });
             }
             
             string productPath = @"Images\Products\product-" + id;
